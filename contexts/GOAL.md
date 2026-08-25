@@ -1,93 +1,122 @@
-# Build Night Goal
+# Goal: <one concrete demoable outcome>
+
+Status: **active**
 
 ## Outcome
 
-Replace this line with one concrete, demoable outcome that can reasonably fit inside the build-night window.
+Describe the user-visible result and terminal condition. Define the whole build-night outcome, not merely the next patch.
 
 ## Demo path
 
-Describe the shortest path to demonstrate success.
+Describe the shortest reliable path that proves the outcome.
 
-Example:
-
-1. Start the app.
-2. Open the relevant screen.
-3. Perform the new action.
-4. Observe the expected result.
+1. `<start the app/service>`
+2. `<navigate or invoke>`
+3. `<perform the new behavior>`
+4. `<observe the expected result>`
 
 ## Scope
 
-### In scope
+- In scope: `<repositories, components, services, and user flows required for the demo>`
+- Out of scope: `<adjacent work intentionally deferred>`
+- Protected/base source: `<repository, branch, exact starting SHA>`
+- Slice cap: maximum three coherent vertical slices
 
-- Core behavior required for the demo.
-- Up to three coherent implementation slices.
+## Non-negotiable invariants
 
-### Out of scope
-
-- Nice-to-have polish that does not affect the demo.
-- Broad refactors unrelated to the outcome.
-- Production rollout unless explicitly required and authorised.
-
-## Acceptance criteria
-
-- [ ] The primary demo path works.
-- [ ] The changed behavior has focused verification where practical.
-- [ ] The affected target builds or compiles where applicable.
-- [ ] Known incomplete behavior is documented.
-- [ ] Final handoff states the exact evidence level reached.
+- Preserve correctness, privacy, accessibility, and unrelated user work.
+- Preserve existing contracts unless the goal explicitly changes them.
+- Add task-specific invariants here.
 
 ## Workboard
 
-Keep exactly one item marked **IN PROGRESS**.
+Keep exactly one item marked **IN PROGRESS** during engineering. Update this after every material verification result, completed slice, freeze transition, compaction, or handoff.
 
-- [ ] **IN PROGRESS** Ground the current behavior and identify the smallest vertical slice.
+Do not leave completed work labelled **IN PROGRESS**. Do not mark unverified behavior as accepted.
+
+- [ ] **IN PROGRESS** Observe current behavior and identify the smallest vertical slice.
+- [ ] Specify the primary demo path, important edge cases, and explicit deferred scope.
 - [ ] Implement slice 1.
-- [ ] Focused verify slice 1.
-- [ ] Implement slice 2 only if it clearly fits.
-- [ ] Implement slice 3 only if it clearly fits.
-- [ ] Freeze features at minute 90.
-- [ ] Stabilize and verify.
-- [ ] Freeze code at minute 105.
-- [ ] Prepare demo.
-- [ ] Stop engineering at minute 115.
-- [ ] Write final handoff.
+- [ ] Focused verify slice 1 and build the affected target.
+- [ ] Implement slice 2 only if it clearly fits before feature freeze.
+- [ ] Implement slice 3 only if it clearly fits before feature freeze.
+- [ ] Self-review the full changed diff and fix accepted demo-blocking findings.
+- [ ] At minute 90, freeze features and stabilize the retained demo path.
+- [ ] Run the highest-value applicable verification that fits the remaining budget.
+- [ ] At minute 105, freeze normal source changes and prepare the exact demo.
+- [ ] Complete any authorised Git/PR/delivery action that fits; hand off the rest.
+- [ ] At minute 115, stop engineering and write the exact handoff.
+
+## Acceptance criteria
+
+### Source
+
+- [ ] `<observable source behavior required for the outcome>`
+
+### Demo
+
+- [ ] The primary demo path completes successfully.
+
+### Verification
+
+- [ ] `<focused regression or direct smoke>`
+- [ ] Affected target builds/compiles where applicable.
+- [ ] Any broader check actually run is recorded with its result.
+
+### Review
+
+- [ ] The actual diff was self-reviewed for obvious correctness, security/privacy, stale state, error paths, and demo-breaking edge cases relevant to the change.
+
+### Delivery
+
+- [ ] `<commit/PR/check/deployment/handoff criterion, or explicitly not required>`
+
+### Human / real-environment acceptance
+
+- [ ] `<manual acceptance, or explicitly leave open if not observed>`
 
 ## Evidence log
 
-Record only observed evidence.
+Record exact base/head SHAs, commands, results, CI checks, observations, and limitations. Planned evidence is not evidence.
 
 ```text
-Implemented: pending
-Focused verified: pending
-Locally verified: pending
-Protected: pending/not required
-Distributed: pending/not required
-Accepted: pending/not required
+Implemented: not reached
+Focused verified: not reached
+Locally verified: not reached
+Protected: not reached/not required
+Distributed: not reached/not required
+Accepted: not reached/not required
 ```
 
 ## Deferred work
 
-Record useful work intentionally removed from the build-night scope.
+Record useful work deliberately removed from the sprint so another agent can pick it up later.
 
 - None yet.
 
 ## Blocking questions
 
-Use `None` unless a genuinely blocking decision cannot be safely resolved with a reversible assumption.
+None.
 
-None
+Only record a question when no safe reversible assumption can keep work inside the goal. An unfinished test or external check is not automatically a blocking question.
 
-## Final handoff
+## Handoff
 
-Complete this at the end:
+At any pause, compaction, model switch, or final stop, record:
 
 ```text
-Outcome:
-Revision/branch:
+Outcome achieved so far:
+Current phase:
+Branch/revision:
+Dirty/uncommitted paths:
+Current/last completed slice:
 Implemented:
-Verification run:
-Demo path:
-Open/incomplete:
+Verification run and exact result:
+Demo path status:
+Open acceptance:
+Deferred/incomplete:
 Known defects or assumptions:
-Next best action:
+Next exact unmet criterion:
 ```
+
+The next agent should be able to continue from this file plus `CURRENT.md`, Git state, and the timer without needing the previous chat.
