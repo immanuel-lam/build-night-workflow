@@ -2,9 +2,9 @@
 
 ## Mission
 
-Produce the best demonstrable working result before the 120-minute deadline.
+Run the Platform workflow in sprint mode and produce the best demonstrable working result before the 120-minute deadline.
 
-The objective is not maximum completeness. The objective is a coherent outcome that can be shown, explained, and handed off truthfully.
+The timing rules below constrain execution. They do not replace context routing, durable current state, one active goal, verification discipline, or handoff continuity.
 
 ## Hard limits
 
@@ -13,48 +13,56 @@ The objective is not maximum completeness. The objective is a coherent outcome t
 - Do not expand scope after minute 60.
 - No new features after minute 90.
 - No normal source changes after minute 105.
-- After minute 105, only a critical build-breaking fix may change source.
+- After minute 105, only a critical build-breaking or demo-blocking fix may change source.
 - Stop all engineering work at minute 115.
 - Always preserve the final five minutes for handoff.
 
-## Start
+## Start or resume
 
-1. Read `AGENTS.md`, this file, `contexts/GOAL.md`, `contexts/CURRENT.md`, and `contexts/VERIFICATION.md`.
-2. Run `git status --short --branch` and preserve unrelated work.
-3. Run `bash scripts/build-night-status.sh start` if the timer has not started.
-4. Confirm the goal has one demoable outcome and a short acceptance list.
-5. Inspect only the source required to implement the first vertical slice.
+1. Read `AGENTS.md`.
+2. Read `contexts/CONTEXT_MAP.md`.
+3. Read `contexts/CURRENT.md` and `contexts/GOAL.md`.
+4. Use the context map to load only the task-specific sources required for the active slice.
+5. Inspect `git status --short --branch`, the current diff, and any existing relevant branch/revision state.
+6. Run `bash scripts/build-night-status.sh start` if the timer has not started; otherwise run `bash scripts/build-night-status.sh`.
+7. Resume the first unmet workboard or acceptance item that still fits the current phase.
+
+After compaction, model switch, or another agent taking over, repeat this grounding from repository evidence. Do not reconstruct completed work from chat memory.
+
+## Continuous sprint loop
+
+Until feature freeze, work in coherent slices:
+
+1. **Observe** — establish the current behavior from source, tests, logs, payloads, screenshots, or reproducible runtime evidence.
+2. **Route context** — use `CONTEXT_MAP.md` to read only the contracts needed for this slice.
+3. **Plan** — identify the smallest safe boundary, important edge cases, owners, fallbacks, and demo path.
+4. **Implement** — make one coherent vertical change.
+5. **Focused verify** — run the narrow regression and build/compile the affected target where applicable.
+6. **Self-review** — inspect the actual diff and the surrounding owner code for obvious correctness, security/privacy, stale-state, error-path, and demo-breaking issues relevant to the change.
+7. **Persist** — update `GOAL.md` and `CURRENT.md` with the exact result and evidence.
+8. **Check timer** — run `bash scripts/build-night-status.sh` before starting another slice.
+9. **Continue or freeze** — start another slice only if it clearly fits the remaining implementation budget.
+
+This is intentionally the same engineering shape as the full workflow, with a stricter stop condition.
 
 ## Investigation budget
 
 Do not exhaustively inspect the repository.
 
-Read only:
+Read:
 
 1. repository instructions;
-2. the active goal and current-state notes;
-3. directly relevant source files;
-4. dependencies or contracts required to understand those files.
+2. current state and active goal;
+3. the source that owns the current slice;
+4. dependencies or contracts required to understand that source.
 
 Search outward only when required to complete the goal.
 
 If investigation of one problem exceeds 10 minutes without a clear implementation direction, simplify the approach, choose an existing pattern, or remove that part from scope.
 
-## Execution loop
-
-Use this loop until feature freeze:
-
-1. **Ground** — establish the relevant current behavior from source or a reproducible observation.
-2. **Choose slice** — select the smallest user-visible or demo-visible vertical slice.
-3. **Implement** — make one coherent change.
-4. **Focused verify** — run the narrowest meaningful regression and build/compile the affected target where applicable.
-5. **Self-review** — inspect the changed diff and obvious edge cases.
-6. **Check timer** — run `bash scripts/build-night-status.sh` before starting another slice.
-7. **Continue or freeze** — only start another slice if it clearly fits inside the remaining implementation budget.
-
 ## Slice policy
 
-A slice should be independently understandable and move the demo forward.
+A slice should be independently understandable, reviewable, and move the demo forward.
 
 Do not start a slice if:
 
@@ -65,6 +73,15 @@ Do not start a slice if:
 
 When uncertain, preserve the current working slice and move to verification.
 
+## Scope lock — minute 60
+
+At minute 60:
+
+- do not add new outcome requirements;
+- do not broaden the architecture merely because more possibilities were discovered;
+- convert non-essential discoveries into `GOAL.md` deferred work;
+- finish only work necessary for the agreed demo path.
+
 ## Feature freeze — minute 90
 
 At minute 90:
@@ -74,7 +91,8 @@ At minute 90:
 - fix defects that block the demo;
 - run focused verification;
 - remove or disable incomplete optional behavior rather than carrying broken partial work;
-- update `contexts/CURRENT.md` with the actual state.
+- reconcile the workboard and acceptance criteria in `GOAL.md`;
+- update `CURRENT.md` with the actual phase, evidence, and next action.
 
 ## Code freeze — minute 105
 
@@ -85,7 +103,7 @@ At minute 105:
 - prepare the exact demo path;
 - update README/demo instructions if needed;
 - capture screenshots, sample data, or commands required for presentation;
-- record verification results.
+- record verification results and limitations.
 
 Do not reopen scope because extra time appears to remain.
 
@@ -93,18 +111,22 @@ Do not reopen scope because extra time appears to remain.
 
 At minute 115, stop editing, testing, refactoring, and reviewing.
 
-Use the remaining time only for the final handoff.
+Use the remaining time only to persist state and write the final handoff.
+
+The final repository state must let another agent continue without the previous chat.
 
 The handoff must state:
 
 - exact outcome achieved;
-- branch or revision when known;
+- current phase;
+- branch/revision and dirty paths;
 - what was implemented;
 - what verification actually ran and its result;
-- the demo path;
+- the demo path and whether it was observed;
+- open acceptance;
 - omitted or incomplete functionality;
-- any known defects or unverified assumptions;
-- the single best next action.
+- known defects or unverified assumptions;
+- the single exact next unmet criterion.
 
 ## Verification strategy
 
@@ -121,11 +143,11 @@ After feature freeze:
 - full repository checks are optional when expensive;
 - never sacrifice a demonstrable working result merely to reach a higher evidence level.
 
-See `contexts/VERIFICATION.md` for evidence labels.
+See `contexts/VERIFICATION.md` for commands and evidence labels.
 
 ## Review policy
 
-Self-review the changed diff.
+Self-review the actual changed diff.
 
 Do not launch independent or subagent review unless:
 
@@ -149,11 +171,12 @@ Preserve unrelated changes. Never use destructive reset/checkout operations to f
 If the complete feature cannot fit:
 
 1. preserve the smallest working vertical slice;
-2. remove optional behavior;
+2. move optional behavior into deferred work;
 3. keep broken partial work out of the demo path;
 4. record omitted functionality explicitly;
 5. verify the retained slice;
-6. finish demo preparation and handoff.
+6. persist accurate `CURRENT.md` and `GOAL.md` state;
+7. finish demo preparation and handoff.
 
 A smaller working result beats a larger unfinished result.
 
@@ -174,6 +197,6 @@ Do not collapse these labels into one another.
 
 Before every new action, ask:
 
-> Does this increase the probability of a working demo before minute 115?
+> Does this increase the probability of a working, evidence-backed demo before minute 115 while keeping the repository resumable?
 
-If not, defer it and record it in the handoff.
+If not, defer it and record it in the goal/handoff.
