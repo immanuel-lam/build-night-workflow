@@ -1,48 +1,40 @@
 # Context map
 
-Read the smallest useful bundle for the task. This is the same routing principle as the full Platform workflow, compressed for a two-hour build night.
+Read the smallest useful bundle for the task. Follow links when the first bundle shows that another source controls the work.
 
 | Task type | Read first | Read when needed |
 | --- | --- | --- |
-| Any build-night outcome | `../AGENTS.md`, `../BUILD_NIGHT.md`, `CURRENT.md`, `GOAL.md` | `VERIFICATION.md` and directly relevant source |
-| New outcome / first run | `../AGENTS.md`, `../BUILD_NIGHT.md`, `CURRENT.md`, `GOAL.md` | Product, architecture, or API contracts that define acceptance |
-| Resume after compaction / new agent | `CURRENT.md`, `GOAL.md` | `VERIFICATION.md`, then inspect Git state before continuing |
-| UI / accessibility | `GOAL.md`, affected UI source, `VERIFICATION.md` | Design source, snapshots, platform guidance |
-| API / integration | `GOAL.md`, interface contract, affected source | Retry, quota, security, compatibility sources |
-| Data / persistence | `GOAL.md`, schema/model owner, affected source | Migration, recovery, privacy rules |
-| Git / PR / delivery | `CURRENT.md`, `GOAL.md`, `VERIFICATION.md` | Branch protection, CI, deployment configuration |
-| Demo preparation | `GOAL.md`, `CURRENT.md` | Run instructions, sample data, screenshots |
+| Any substantial outcome | `../AGENTIC_WORKFLOW.md`, `CURRENT.md`, `GOALS.md`, the active root goal | The relevant dated context narrative |
+| New substantial outcome | `../AGENTIC_WORKFLOW.md`, `CURRENT.md`, `GOAL_TEMPLATE.md` | Product or architecture sources that define acceptance |
+| Small current-state change | `CURRENT.md` | `GOALS.md` when the task grows beyond one session |
+| User interface or accessibility | The project design source, affected code, `VERIFICATION.md` | Platform guidance, snapshots, or device instructions |
+| API or integration | The interface contract, affected code, `VERIFICATION.md` | Security, retry, quota, or compatibility sources |
+| Data, persistence, or migration | The schema source, affected code, `VERIFICATION.md` | Backup, recovery, privacy, and rollout sources |
+| Deployment or release | `CURRENT.md`, `VERIFICATION.md`, the release workflow | Environment, rollback, observability, and approval sources |
+| Git, pull request, or merge | `CURRENT.md`, the repository Git policy | Branch protection and required-check configuration |
+| Historical decision | `INDEX.md` | The linked dated narrative and the named revision |
 
 ## Retrieval rules
 
-1. Inspect the current branch and working tree before editing.
-2. Read only the source that owns the current slice.
-3. Follow references outward only when the current slice requires them.
-4. Verify mutable facts from Git, tests, CI, or the real environment instead of trusting stale notes.
-5. Do not spend the sprint building a complete mental model of the repository.
+1. Inspect the working tree and current branch before an edit.
+2. Use repository search to find the source that defines the behaviour.
+3. Read linked sources only when the current task needs them.
+4. Verify mutable external facts instead of trusting an old context note.
+5. Stop loading context once the owning code, relevant invariant, and safe change boundary are clear.
 
 ## Precedence
 
 1. The user's current request controls the outcome and scope.
-2. Safety, legal, platform, and repository rules control restricted actions.
-3. `AGENTS.md` and `BUILD_NIGHT.md` control build-night execution.
-4. `GOAL.md` controls the active outcome, workboard, acceptance criteria, and deferred scope.
-5. `CURRENT.md` records what is true now and the exact next action.
-6. Current code, tests, Git state, CI, and real-environment observations control factual claims.
-7. `VERIFICATION.md` controls evidence labels and verification priority.
+2. Safety, legal, and platform rules control restricted actions.
+3. The nearest repository instruction file controls local work.
+4. The active goal controls the persistent workboard and acceptance criteria.
+5. Current code, tests, and external state control factual claims.
+6. Dated narratives explain history; they do not override current evidence.
 
-## Context compaction and agent handoff
+## Context compaction
 
-After a context reset, model switch, or new agent session:
-
-1. read `CURRENT.md`;
-2. read `GOAL.md`;
-3. inspect `git status --short --branch` and the current diff;
-4. run `bash scripts/build-night-status.sh`;
-5. resume the first unmet workboard or acceptance item that still fits the current phase.
-
-Do not replay completed work from memory. Repository state is the source of truth.
+After a context reset, read `CURRENT.md`, `GOALS.md`, and the active root goal. Inspect Git state before continuing.
 
 ## Ownership
 
-Keep this map short. Add a recurring task type only when it has a stable authoritative source worth routing to.
+Update this map when the project adds a new authoritative document or recurring task type. Do not add every useful file.
