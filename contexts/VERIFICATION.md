@@ -1,74 +1,68 @@
-# Build Night Verification
+# Verification
 
-Verification is proportional to the remaining time and the risk of the changed behavior.
+Replace these example commands and risk rows with the commands that prove your project's invariants.
 
-## Commands
+## Example command ladder
 
-Replace these placeholders before the sprint begins.
+Run the narrowest relevant check first, then expand only when the change risk or requested deliverable justifies it.
 
-```text
-Focused test: <command>
-Affected-target build: <command>
-Optional broader test: <command>
-Lint/static check: <command>
-Demo/run command: <command>
+```bash
+project-command test --focus changed-area
+project-command test --all
+project-command lint
+project-command package --release
+project-command smoke --environment preview
 ```
 
-## During implementation
+Record the command, exit status, important output, environment, and exact revision in the active goal.
 
-Prefer the cheapest checks that directly protect the current slice:
+## Evidence levels
 
-- narrow regression for the changed behavior;
-- build/compile the affected target;
-- targeted lint/typecheck when relevant;
-- direct smoke of the demo path.
+Use these labels exactly.
 
-Do not repeatedly run expensive full-suite checks after every slice.
+1. **Implemented** — source exists on a named revision or working tree.
+2. **Focused verified** — the changed invariant has a narrow regression, and the touched target builds.
+3. **Locally release-verified** — applicable full tests, static checks, packaging, and smokes pass.
+4. **Protected** — required review and protected-branch checks passed for the exact revision.
+5. **Distributed** — an identified artifact from the protected revision reached its intended environment.
+6. **Accepted** — a human or the real environment confirmed the relevant behaviour.
 
-## After feature freeze
+Do not collapse these levels into one completion claim. A short build task does not need to reach every level. Stop at the highest level required by the requested outcome and record what remains open.
 
-At minute 90, stop adding features and spend the remaining engineering budget on the highest-value checks that fit.
+## Example risk matrix
 
-Priority order:
+| Change type | Minimum local evidence | Expand when |
+| --- | --- | --- |
+| Documentation or comments | Link/format or direct inspection | Text changes a contract or policy |
+| Contained implementation | Focused regression and touched-target build | Shared behaviour or broad ownership changes |
+| User interface | Focused test/build and direct smoke | Accessibility/device behaviour is part of the outcome |
+| API or integration | Contract/failure-path check | External compatibility, retry, quota, or security risk changed |
+| Data or migration | Migration/data-integrity check | Rollback/recovery or production data is involved |
+| Release or deployment | Release build/package/smoke | The requested outcome includes protected delivery or distribution |
 
-1. Core demo path works.
-2. Focused regression passes.
-3. Affected target builds/compiles.
-4. Static/type checks for touched code.
-5. Broader tests if they fit comfortably before code freeze.
+## Review
 
-If a full-suite check is known to take a large fraction of the remaining time, skip it and document that it was not run.
+- Self-review the task diff against the intended base.
+- Check changed assumptions, relevant failure paths, security/privacy boundaries, and user-visible claims.
+- Add independent review when required by policy, requested by the user, or justified by risk.
+- Re-run affected checks after a review change.
+- Do not require repeated review loops for ordinary contained work unless a material issue is found.
 
-## Failure handling
+## Real-environment truth
 
-When a check fails:
+A simulator does not prove physical-device behaviour. A local server does not prove production behaviour. A built artifact does not prove distribution.
 
-- diagnose the first meaningful failure;
-- fix only failures caused by or blocking the build-night outcome;
-- do not chase unrelated pre-existing failures;
-- do not rerun flaky tests repeatedly until green without understanding the failure;
-- if a fix threatens the deadline, reduce scope and preserve the working slice.
+Keep these checks open until the correct person, device, service, or environment records the result.
 
-## Evidence labels
+## Delivery record
 
-Use these labels exactly and only when supported:
+When push, pull request, merge, deployment, or release is actually in scope, record:
 
-1. **Implemented** — source exists in the working tree or named revision.
-2. **Focused verified** — the core changed behavior has a narrow passing check and the affected target builds where applicable.
-3. **Locally verified** — selected broader local checks pass.
-4. **Protected** — required remote/protected-branch checks pass for the exact revision.
-5. **Distributed** — an identified artifact reaches its intended environment.
-6. **Accepted** — a human or real environment confirms the relevant behavior.
+- the repository and branch;
+- the exact revision;
+- the protected-check result;
+- the artifact or environment identifier when applicable;
+- the observed smoke result; and
+- every acceptance item that remains open.
 
-A lower level does not imply a higher one.
-
-## Handoff evidence format
-
-```text
-Implemented: <what exists and where>
-Focused verified: <commands and results or not reached>
-Locally verified: <commands and results or not reached>
-Protected: <status or not required/not reached>
-Distributed: <status or not required/not reached>
-Accepted: <status or not required/not reached>
-```
+Do not perform delivery work merely to raise the evidence label when the requested build-night outcome is already satisfied.
